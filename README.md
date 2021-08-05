@@ -8,6 +8,7 @@ This software builds on top of tools from the _Virtual Imaging Clinical Trial fo
 These tools are used to generate high-resolution stochastic tissue maps of breast anatomy (breast phantoms) as well as spiculated tumor numerical phantoms.
 
 The output of the software consists of three-dimensional high-resolution maps of the breast acoustic properties, including speed-of-sound, density, and acoustic attenuation.
+To reduce computational cost, the user can also generate acoustic properties maps for a specific 2D slice or thin 3D slab (parallel to the frontal plan) rather then the full 3D phantom.
 
 
 ## Dependencies
@@ -34,9 +35,9 @@ VICTRE configuration file templates for different breast types can be found in t
 
 Two files are required for the execution of the next step:
 
-- p_{phantom_id}.raw.gz: A compressed 3D anatomical data.
+- `p_{phantom_id}.raw.gz`: A compressed 3D anatomical data.
 
-- p_{phantom_id}.mhd: A header file for this phantom that contains the physical location of the voxel with index [0, 0, 0], the total number of voxels in the x, y, and z, and the voxel size.
+- `p_{phantom_id}.mhd`: A header file for this phantom that contains the physical location of the voxel with index [0, 0, 0], the total number of voxels in the x, y, and z, and the voxel size.
 
 ### 2. Assignment of acoustic properties
 
