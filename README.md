@@ -4,35 +4,35 @@ This software project aims at generating stochastic numerical breast phantoms
 with anatomically realistic tissue structures and physiologically realistic
 acoustic properties for use in ultrasound computed tomography (USCT) virtual imaging studies.
 
-This software builds on top of tools for the _Virtual Imaging Clinical Trial for Regulatory Evaluation_ ((VICTRE)[https://github.com/DIDSR/VICTRE]) project
-to generatee the numerical breast and tumor phantoms.
+This software builds on top of tools from the _Virtual Imaging Clinical Trial for Regulatory Evaluation_ ((VICTRE)[https://github.com/DIDSR/VICTRE]) project.
+These tools are used to generate high-resolution stochastic tissue maps of breast anatomy (breast phantoms) as well as spiculated tumor numerical phantoms.
 
 The output of the software consists of three-dimensional high-resolution maps of the breast acoustic properties, including speed-of-sound, density, and acoustic attenuation.
 
 
-## The dependecies
+## Dependencies
 
 numpy, scipy, h5py, hdf5storage
 
-## Using the software
+## Usage
 
-### 1. Preparation of tissue structure data(tissue label map)
+### 1. Generation of tissue structure data (tissue label maps)
 
-An example of VICTRE phantom raw data is shared on Harvard dataverse. https://doi.org/10.7910/DVN/1KJK4G 
-The example data for testing our code can be downloaded by:
+An example of a VICTRE phantom (raw format) is available on the (Harvard dataverse)[https://doi.org/10.7910/DVN/1KJK4G].
+The example data for testing our code can be downloaded using the following command:
 ```
 wget https://dataverse.harvard.edu/api/access/datafile/4950808 -O ./data/Phantom_set/p_324402160.mhd
 wget https://dataverse.harvard.edu/api/access/datafile/4950809 -O ./data/Phantom_set/p_324402160.raw.gz
 ```
-The downloaded data will be saved in `./data/Phantom\_set`. 
+The downloaded data should be store in the `./data/Phantom\_set` folder.
 
-Alternatively, users can create their own structure phantoms by the use of VICTRE software.
+Alternatively, users can create their own tissue label phantoms by the use of the VICTRE software.
 1. VICTRE (BreastPhantom)[https://github.com/DIDSR/breastPhantom]: a c++ opensource software for the generation of anthropomorphic breast phantoms
 2. VICTRE (BreastMass)[https://github.com/DIDSR/breastMass]: a c++ opensource software for the generation of three-dimensional breast lesions
 
-Where the folder `./data/Phantom\_cfg` contains the VICTRE config file templates for each breast type.
+VICTRE configuration file templates for different breast types can be found in the  folder `./data/Phantom\_cfg`.
 
-Two data are required for the executation of the next step:
+Two files are required for the execution of the next step:
 
 - p_{phantom_id}.raw.gz: A compressed 3D anatomical data.
 
@@ -54,10 +54,10 @@ python3 run_assign_properties.py -phantom_id <the digit identifier of the breast
 ```
 where
 
-- `phantom_id` is the digit identifier of the breast phantom used to generate the anatomical structures which is included in raw data file name.
-- `raw_data_path` is the folder with raw anatomical data and header file
-- `target_slice` is the target slice to be extracted in 3D anatomical data.
-- `thickness` is the thickness of acoustic phantom to be generated (z-axis).
+- `phantom_id` is the digit identifier of the breast phantom that is part of the raw data filename.
+- `raw_data_path` is the folder with raw anatomical data and header files
+- `target_slice` is the target slice to be extracted from the 3D phantom.
+- `thickness` is the thickness of a 3D slab (centered at the target slice) extracted from the phantom.
 - `output_path` is the folder for saving the output data.
 
 An example script is given in file `./run_assign_properties.sh`
