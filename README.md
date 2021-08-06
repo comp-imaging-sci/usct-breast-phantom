@@ -62,6 +62,7 @@ where
 - `thickness` is the thickness of a 3D slab (centered at the target slice) extracted from the phantom.
 - `output_path` is the folder for saving the output data.
 
+If parameter target_slice or thickness is not specified, a full 3D phantom will be generated.
 An example script is given in file `./run_assign_properties.sh`
 
 

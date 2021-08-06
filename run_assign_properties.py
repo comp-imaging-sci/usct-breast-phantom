@@ -29,8 +29,8 @@ This code is to generate slab 3d acoutisc phantoms
 parser = argparse.ArgumentParser()
 parser.add_argument('-phantom_id', type=str)
 parser.add_argument('-raw_data_path', type=str)
-parser.add_argument('-target_slice', type=int)
-parser.add_argument('-thickness', type=int)
+parser.add_argument('-target_slice', type=int, default=-1)
+parser.add_argument('-thickness', type=int, default=-1)
 parser.add_argument('-output_path', type=str)
 
 

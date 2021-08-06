@@ -56,6 +56,11 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     volume = np.fromstring(_buffer, 'uint8')
     volume = np.reshape(volume, (xDim, yDim, zDim), order='F')
     #check target slice range
+    if zz==-1 or thickness==-1:
+        print ('genertate whole 3d volume data')
+        return volume
+
+    print ('genertate slab 3d volume data')
     assert(zz>=0 and zz<zDim) # need a reasonable target slice number
     lb = zz-thickness;
     ub = zz+thickness;
