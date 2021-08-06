@@ -10,6 +10,8 @@ These tools are used to generate high-resolution stochastic tissue maps of breas
 The output of the software consists of three-dimensional high-resolution maps of the breast acoustic properties, including speed-of-sound, density, and acoustic attenuation.
 To reduce computational cost, the user can also generate acoustic properties maps for a specific 2D slice or thin 3D slab (parallel to the frontal plan) rather then the full 3D phantom.
 
+If you use this software for your research please cite: Fu Li, Umberto Villa, Seonyeong Park, Mark Anastasio. Title. IEEE Trans Ultrasonics, Ferroelectrics, and Frequency Control, under review, 2021 [https://arxiv.org/abs/2106.02744]
+
 
 ## Dependencies
 
@@ -50,7 +52,6 @@ Before executing this step, make sure all paths for data loading are set correct
 
 To excute this step
 ```sh
-python run_assign_properties.py -t <phantom_type> -mass <tumor> -rseed <seed_number>
 python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> -raw_data_path <the data folder contains tissue structure data> -target_slice <the central slice of the generated phantom> -thickness <the thickness of the phantom to be generated> -output_path <output path>
 ```
 where
