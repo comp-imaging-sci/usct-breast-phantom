@@ -47,7 +47,7 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     xDim = int(cmdout[2]);
     yDim = int(cmdout[3]);
     zDim = int(cmdout[4]);
-    print (xDim,yDim,zDim)
+    print ("VICTRE dims: ", xDim,yDim,zDim)
 
     #xDim =100
     fid = gzip.open(rawgzFile,'rb')
@@ -56,15 +56,14 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     volume = np.fromstring(_buffer, 'uint8')
     volume = np.reshape(volume, (xDim, yDim, zDim), order='F')
     #check target slice range
-    if zz==-1 or thickness==-1:
-        print ('genertate whole 3d volume data')
+    if zz==-1:
+        print ('Generate whole 3d volume data')
         return volume
 
-    print ('genertate slab 3d volume data')
+    print ('Generate 2D slice or 3D slab')
     assert(zz>=0 and zz<zDim) # need a reasonable target slice number
     lb = zz-thickness;
     ub = zz+thickness;
-    print(ub)
     assert(lb>=0) # out of the bounds
     assert(ub<zDim) # out of the bounds
     
@@ -246,22 +245,22 @@ def AddTexture3D(sos, density, label):
     #fat_sos_rn = X.rvs(vshape)
     #fat_dens_rn = X.rvs(vshape)
     kappa = 0.21; h = 0.1 #mm
-    print ('sampler1')
+
     rn = np.random.normal(0,1,vshape)
     text =sampler3D(rn, kappa, h) # for gland sos
     text = text*1451*0.02
     sos[indices_gland] = sos[indices_gland]+text[indices_gland] #gland sos
-    print ('sampler2')
+
     rn = np.random.normal(0,1,vshape)
     text =sampler3D(rn, kappa, h)  # for gland dens
     text = text*999*0.02
     density[indices_gland] = density[indices_gland]+text[indices_gland] #gland dens
-    print ('sampler3')
+
     rn = X.rvs(vshape)
     text =sampler3D(rn, kappa, h)  # for fat sos
     text = text*1420*0.02
     sos[indices_fat] = sos[indices_fat]+text[indices_fat] # fat sos
-    print ('sampler4')
+
     rn = X.rvs(vshape)
     text =sampler3D(rn, kappa, h)  # for fat dens
     # texture = texture;

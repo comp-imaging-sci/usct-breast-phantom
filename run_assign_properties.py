@@ -24,25 +24,8 @@ import hdf5storage
 import scipy
 
 '''
-This code is to generate slab 3d acoutisc phantoms  
+This code assign acoustic properties to the NBP (2D slice, 3D slab, or full phantom)  
 '''
-parser = argparse.ArgumentParser()
-parser.add_argument('-phantom_id', type=str)
-parser.add_argument('-raw_data_path', type=str)
-parser.add_argument('-target_slice', type=int, default=-1)
-parser.add_argument('-thickness', type=int, default=-1)
-parser.add_argument('-output_path', type=str)
-
-
-args = parser.parse_args()
-phantom_id = args.phantom_id
-raw_data_path = args.raw_data_path
-target_slice = args.target_slice
-thickness = args.thickness
-output_path = args.output_path
-
-#deal with health phantom or tumor phantom
-#rseed = args.rseed
 
 def input_check():
     # check whether raw data file exist
@@ -58,6 +41,24 @@ def input_check():
     
         
 if __name__ == '__main__':
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-phantom_id', type=str, help="Digit identifier of breast phantom")
+    parser.add_argument('-raw_data_path', type=str, help="Location of VICTRE raw data")
+    parser.add_argument('-target_slice', type=int, default=-1, help="z-index of slice or mid point of slab to be extracted")
+    parser.add_argument('-thickness', type=int, default=0, help="Thickness of the slab")
+    parser.add_argument('-output_path', type=str, help="Output path")
+    parser.add_argument('-resolution', type=float, default=0.1, help="Voxel size (mm)")
+
+
+    args = parser.parse_args()
+    phantom_id = args.phantom_id
+    raw_data_path = args.raw_data_path
+    target_slice = args.target_slice
+    thickness = args.thickness
+    output_path = args.output_path
+    voxel_size  = args.resolution
+    
     # -----------------------------------
     # 1. Read 3D phantom label data
     # -------------------------------------
@@ -85,10 +86,11 @@ if __name__ == '__main__':
     # -------------------------------
     # 4. Downsampling (from 0.05mm to 0.1mm)
     # -------------------------------
-    map_sos = scipy.ndimage.zoom(map_sos, 0.5)
-    map_density = scipy.ndimage.zoom(map_density, 0.5)
-    map_atten = scipy.ndimage.zoom(map_atten, 0.5)
-    volume = scipy.ndimage.zoom(volume,0.5, mode='nearest')
+    downsampling_factor = 0.05/voxel_size
+    map_sos = scipy.ndimage.zoom(map_sos, downsampling_factor)
+    map_density = scipy.ndimage.zoom(map_density,downsampling_factor)
+    map_atten = scipy.ndimage.zoom(map_atten, downsampling_factor)
+    volume = scipy.ndimage.zoom(volume,downsampling_factor, mode='nearest')
     map_sos, map_density = AddTexture3D(map_sos, map_density, volume)
     map_sos = map_sos.astype('float32')
     map_atten = map_atten.astype('float32')

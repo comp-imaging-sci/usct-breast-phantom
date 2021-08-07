@@ -50,14 +50,25 @@ In this step
 
 Before executing this step, make sure all paths for data loading are set correctly.
 
-To excute this step
+To generate a full 3D NBP
 ```sh
 python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> \
-                                 -raw_data_path <the data folder contains tissue structure data> \
-                                 -target_slice <the central slice of the generated phantom> \
-                                 -thickness <the thickness of the phantom to be generated> \
-                                 -output_path <output path>
+                                 -raw_data_path <the location of the VICTRE NBP> \
+                                 -output_path <output path> \
+                                 -resolution <voxel size in mm>
+```        
+
+
+To generate a 2D slice for 3D NBP
+```sh
+python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> \
+                                 -raw_data_path <the location of the VICTRE NBP> \
+                                 -target_slice <the z-index of 2D-slice or slab center to be extracted> \
+                                 -output_path <output path> \
+                                 -resolution <voxel size in mm>
 ```
+
+
 where
 
 - `phantom_id` is the digit identifier of the breast phantom that is part of the raw data filename.
