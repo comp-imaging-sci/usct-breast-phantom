@@ -4,13 +4,13 @@ This software project aims at generating stochastic numerical breast phantoms
 with anatomically realistic tissue structures and physiologically realistic
 acoustic properties for use in ultrasound computed tomography (USCT) virtual imaging studies.
 
-This software builds on top of tools from the _Virtual Imaging Clinical Trial for Regulatory Evaluation_ ((VICTRE)[https://github.com/DIDSR/VICTRE]) project.
+This software builds on top of tools from the _Virtual Imaging Clinical Trial for Regulatory Evaluation_ ([VICTRE](https://github.com/DIDSR/VICTRE)) project.
 These tools are used to generate high-resolution stochastic tissue maps of breast anatomy (breast phantoms) as well as spiculated tumor numerical phantoms.
 
 The output of the software consists of three-dimensional high-resolution maps of the breast acoustic properties, including speed-of-sound, density, and acoustic attenuation.
-To reduce computational cost, the user can also generate acoustic properties maps for a specific 2D slice or thin 3D slab (parallel to the frontal plan) rather then the full 3D phantom.
+To reduce computational cost, the user can also generate acoustic properties maps for a specific 2D slice or thin 3D slab (parallel to the frontal plane) rather then the full 3D phantom.
 
-If you use this software for your research please cite: Fu Li, Umberto Villa, Seonyeong Park, Mark Anastasio. Title. IEEE Trans Ultrasonics, Ferroelectrics, and Frequency Control, under review, 2021 [https://arxiv.org/abs/2106.02744]
+If you use this software for your research please cite: Fu Li, Umberto Villa, Seonyeong Park, Mark Anastasio. _Three-dimensional stochastic numerical breast phantoms for enabling virtual imaging trials of ultrasound computed tomography_ IEEE Trans Ultrasonics, Ferroelectrics, and Frequency Control, under review, 2021. [preprint](https://arxiv.org/abs/2106.02744)
 
 
 ## Dependencies
@@ -21,7 +21,7 @@ numpy, scipy, h5py, hdf5storage
 
 ### 1. Generation of tissue structure data (tissue label maps)
 
-An example of a VICTRE phantom (raw format) is available on the (Harvard dataverse)[https://doi.org/10.7910/DVN/1KJK4G].
+An example of a VICTRE phantom (raw format) is available from the [Harvard dataverse](https://doi.org/10.7910/DVN/1KJK4G).
 The example data for testing our code can be downloaded using the following command:
 ```
 wget https://dataverse.harvard.edu/api/access/datafile/4950808 -O ./data/Phantom_set/p_324402160.mhd
@@ -30,8 +30,8 @@ wget https://dataverse.harvard.edu/api/access/datafile/4950809 -O ./data/Phantom
 The downloaded data should be store in the `./data/Phantom\_set` folder.
 
 Alternatively, users can create their own tissue label phantoms by the use of the VICTRE software.
-1. VICTRE (BreastPhantom)[https://github.com/DIDSR/breastPhantom]: a c++ opensource software for the generation of anthropomorphic breast phantoms
-2. VICTRE (BreastMass)[https://github.com/DIDSR/breastMass]: a c++ opensource software for the generation of three-dimensional breast lesions
+1. VICTRE [BreastPhantom](https://github.com/DIDSR/breastPhantom): a c++ opensource software for the generation of anthropomorphic breast phantoms
+2. VICTRE [BreastMass](https://github.com/DIDSR/breastMass): a c++ opensource software for the generation of three-dimensional breast lesions
 
 VICTRE configuration file templates for different breast types can be found in the  folder `./data/Phantom\_cfg`.
 
@@ -48,11 +48,15 @@ In this step
 2. We remove labels corresponding to tissues that are invisible in USCT imaging
 3. We assign stochastic acoustic properties maps
 
-Before executing this step, make sure all paths for data loading are set correctly
+Before executing this step, make sure all paths for data loading are set correctly.
 
 To excute this step
 ```sh
-python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> -raw_data_path <the data folder contains tissue structure data> -target_slice <the central slice of the generated phantom> -thickness <the thickness of the phantom to be generated> -output_path <output path>
+python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> \
+                                 -raw_data_path <the data folder contains tissue structure data> \
+                                 -target_slice <the central slice of the generated phantom> \
+                                 -thickness <the thickness of the phantom to be generated> \
+                                 -output_path <output path>
 ```
 where
 
@@ -62,7 +66,7 @@ where
 - `thickness` is the thickness of a 3D slab (centered at the target slice) extracted from the phantom.
 - `output_path` is the folder for saving the output data.
 
-If parameter target_slice or thickness is not specified, a full 3D phantom will be generated.
+If parameter target_slice or thickness is not specified, the full 3D phantom will be generated.
 An example script is given in file `./run_assign_properties.sh`
 
 
