@@ -56,7 +56,7 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     volume = np.fromstring(_buffer, 'uint8')
     volume = np.reshape(volume, (xDim, yDim, zDim), order='F')
     #check target slice range
-    if zz==-1:
+    if zz==-1 or thickness==-1:
         print ('Generate whole 3d volume data')
         return volume
 
@@ -96,9 +96,12 @@ def Labelprocessing3d(volume):
     while 1:
         # until all extral labels are removed
         volume = RemoveLabel(volume, Labels['Artery'])
+        volume = RemoveLabel(volume, Labels['Artery'])
+        volume = RemoveLabel(volume, Labels['Vein'])
         volume = RemoveLabel(volume, Labels['Vein'])
         ar = np.sum(volume[2:-2,:,:]==Labels['Artery'])
         ve = np.sum(volume[2:-2,:,:]==Labels['Vein'])
+#        print (ar)
         if ar==0 and ve==0:
             break
     print (np.unique(volume[2:-2,:,:]))
@@ -197,6 +200,30 @@ def SetPropValue(Prop, tissue):
 
 
 
+
+def sampler2D(b, kappa, h):
+    '''
+    generate texture signal by gauss spectral function
+    more details in paper
+    Franceschini E, Mensah S, Amy D, Lefebvre JP. A 2-D anatomic breast ductal computer phantom for ultrasonic imaging. IEEE Trans Ultrason Ferroelectr Freq Control. 2006;53(7):1281-1288. doi:10.1109/tuffc.2006.1665076
+    b: input whitenoise
+    kappa: correlation length [mm]
+    h: pixel size[mm]
+    '''
+    bhat = fft.fftn(b);
+    nx,ny = b.shape;
+    Lx = nx*h;
+    Ly = ny*h;
+    ky = np.concatenate((np.linspace(0,int(ny/2)-1,int(ny/2)),np.linspace(int(-ny/2),-1,int(ny/2))), axis=None)
+    kx = np.concatenate((np.linspace(0,int(nx/2)-1,int(nx/2)),np.linspace(int(-nx/2),-1,int(nx/2))), axis=None)
+    ky = (2*math.pi/float(Ly))*ky
+    kx = (2*math.pi/float(Lx))*kx#[np.linspace(0,nx/2-1,nx/2), np.linspace(nx/2,-1,nx/2)]
+    kkx, kky = np.meshgrid(ky,kx)
+    #d = np.power(((np.power(kkx,2) + np.power(kky,2)) + 1./(kappa*kappa)),alpha_over_2);
+    d2 = np.exp(-kappa*kappa*(np.power(kkx,2) + np.power(kky,2))/8)
+    m = np.real(fft.ifftn(bhat*d2))
+    return m
+
 def sampler3D(b, kappa, h):
     '''
     generate texture signal by gauss spectral function
@@ -234,6 +261,7 @@ def AddTexture3D(sos, density, label):
     '''
   
     vshape = sos.shape
+    print (vshape)
     #gland_dens_rn = np.random.normal(0,1,vshape)
     mean = 0; sigma =1; lw = mean-0.9*sigma; up = mean+0.9*sigma;
     X = stats.truncnorm((lw-mean)/sigma, (up-mean)/sigma, loc=mean, scale=sigma)
@@ -247,22 +275,35 @@ def AddTexture3D(sos, density, label):
     kappa = 0.21; h = 0.1 #mm
 
     rn = np.random.normal(0,1,vshape)
-    text =sampler3D(rn, kappa, h) # for gland sos
+    if len(rn.shape)==2:
+        text = sampler2D(rn, kappa, h)
+    else:
+        text =sampler3D(rn, kappa, h) # for gland sos
     text = text*1451*0.02
     sos[indices_gland] = sos[indices_gland]+text[indices_gland] #gland sos
+    
 
     rn = np.random.normal(0,1,vshape)
-    text =sampler3D(rn, kappa, h)  # for gland dens
+    if len(rn.shape)==2:
+        text = sampler2D(rn, kappa, h)
+    else:
+        text =sampler3D(rn, kappa, h)  # for gland dens
     text = text*999*0.02
     density[indices_gland] = density[indices_gland]+text[indices_gland] #gland dens
 
     rn = X.rvs(vshape)
-    text =sampler3D(rn, kappa, h)  # for fat sos
+    if len(rn.shape)==2:
+        text = sampler2D(rn, kappa, h)
+    else:    
+        text =sampler3D(rn, kappa, h)  # for fat sos
     text = text*1420*0.02
     sos[indices_fat] = sos[indices_fat]+text[indices_fat] # fat sos
 
     rn = X.rvs(vshape)
-    text =sampler3D(rn, kappa, h)  # for fat dens
+    if len(rn.shape)==2:
+        text = sampler2D(rn, kappa, h)
+    else:
+        text =sampler3D(rn, kappa, h)  # for fat dens
     # texture = texture;
     # adjust std to 2%:
     # mapping current disribution to truncated guassian distribution

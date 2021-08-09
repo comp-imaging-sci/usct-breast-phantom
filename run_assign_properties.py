@@ -12,10 +12,6 @@
 # Software Foundation) version 2.0 dated June 1991.
 
 
-
-
-
-
 import argparse
 import struct
 from usct_vit import *
@@ -69,8 +65,11 @@ if __name__ == '__main__':
     # 2. Removel extral labels and extract the slice contain tumor
     # -------------------------------
     volume = Labelprocessing3d(volume)
-    print(volume.shape)
+    #print('v:',volume.shape)
+    if volume.shape[0]==1:
+        volume = np.squeeze(volume)
     # overwrite the volume
+    #print('v:',volume.shape)
     # -------------------------------
     # 3. Assign acoustic properties
     # -------------------------------
