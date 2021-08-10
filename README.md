@@ -1,4 +1,4 @@
-# Anatomically and physiologically realistic numerical breast phantoms for USCT virtual imaging studies
+# usct-breast-phantom: A python library to anatomically and physiologically realistic numerical breast phantoms for USCT virtual imaging studies
 
 This software project aims at generating stochastic numerical breast phantoms 
 with anatomically realistic tissue structures and physiologically realistic
