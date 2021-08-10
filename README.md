@@ -73,7 +73,7 @@ To generate a 3D thin slab from the 3D NBP
 python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> \
                                  -raw_data_path <the location of the VICTRE NBP> \
                                  -target_slice <the z location (mm) of 2D-slice or slab center to be extracted> \
-                                 -thickness <the thinkness of the slab in voxel units> \
+                                 -thickness <the thinkness of the slab in mm> \
                                  -output_path <output path> \
                                  -resolution <voxel size in mm>
 ```
@@ -82,8 +82,8 @@ where
 
 - `phantom_id` is the digit identifier of the breast phantom that is part of the raw data filename.
 - `raw_data_path` is the folder with raw anatomical data and header files
-- `target_slice` is the target slice to be extracted from the 3D phantom.
-- `thickness` is the thickness of a 3D slab (centered at the target slice) extracted from the phantom.
+- `target_slice` is the target slice location (mm) to be extracted from the 3D phantom.
+- `thickness` is the thickness (mm) of a 3D slab (centered at the target slice) extracted from the phantom.
 - `output_path` is the folder for saving the output data.
 
 If parameter target_slice or thickness is not specified, the full 3D phantom will be generated.

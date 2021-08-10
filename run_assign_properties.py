@@ -52,7 +52,7 @@ if __name__ == '__main__':
     target_slice = np.int(args.target_slice/0.05)
     output_path = args.output_path
     voxel_size  = args.resolution
-    thickness = np.int(args.thickness/voxel_size)
+    thickness = np.int(args.thickness/0.1)
 
     # -----------------------------------
     # 1. Read 3D phantom label data
