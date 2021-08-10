@@ -37,12 +37,11 @@ def input_check():
     
         
 if __name__ == '__main__':
-    
     parser = argparse.ArgumentParser()
     parser.add_argument('-phantom_id', type=str, help="Digit identifier of breast phantom")
     parser.add_argument('-raw_data_path', type=str, help="Location of VICTRE raw data")
-    parser.add_argument('-target_slice', type=int, default=-1, help="z-index of slice or mid point of slab to be extracted")
-    parser.add_argument('-thickness', type=int, default=0, help="Thickness of the slab")
+    parser.add_argument('-target_slice', type=float, default=-1,help="z-location (mm) of slice or mid point of slab to be extracted")
+    parser.add_argument('-thickness', type=float, default=0, help="Thickness (mm) of the slab")
     parser.add_argument('-output_path', type=str, help="Output path")
     parser.add_argument('-resolution', type=float, default=0.1, help="Voxel size (mm)")
 
@@ -50,11 +49,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     phantom_id = args.phantom_id
     raw_data_path = args.raw_data_path
-    target_slice = args.target_slice
-    thickness = args.thickness
+    target_slice = np.int(args.target_slice/0.05)
     output_path = args.output_path
     voxel_size  = args.resolution
-    
+    thickness = np.int(args.thickness/voxel_size)
+
     # -----------------------------------
     # 1. Read 3D phantom label data
     # -------------------------------------
@@ -64,6 +63,7 @@ if __name__ == '__main__':
     # -------------------------------
     # 2. Removel extral labels and extract the slice contain tumor
     # -------------------------------
+    #print (volume.shape)
     volume = Labelprocessing3d(volume)
     #print('v:',volume.shape)
     if volume.shape[0]==1:
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         map_density[indices] = SetPropValue(Density[key], key)
         map_atten[indices] = SetPropValue(Atten[key], key)
     # -------------------------------
-    # 4. Downsampling (from 0.05mm to 0.1mm)
+    # 4. Downsampling (from 0.05mm to 0.1mm) (default)
     # -------------------------------
     downsampling_factor = 0.05/voxel_size
     map_sos = scipy.ndimage.zoom(map_sos, downsampling_factor)

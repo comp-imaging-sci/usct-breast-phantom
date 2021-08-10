@@ -12,7 +12,6 @@
 # Software Foundation) version 2.0 dated June 1991.
 
 
-
 from .config import *
 import numpy.fft as fft
 import math
@@ -44,19 +43,33 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     rawgzFile = os.path.join(_path, 'p_'+phantom_id+'.raw.gz');
     cmdout=os.popen('cat '+headerFile+' |grep DimSize').read()
     cmdout=cmdout.split()
-    xDim = int(cmdout[2]);
-    yDim = int(cmdout[3]);
-    zDim = int(cmdout[4]);
-    print ("VICTRE dims: ", xDim,yDim,zDim)
-
+    zDim = int(cmdout[2]);
+    xDim = int(cmdout[3]);
+    yDim = int(cmdout[4]);
     #xDim =100
+    print ("VICTRE dims: ", zDim,xDim,yDim)                                      
+    print ("physical dims: ",    '{:.4} {:.4} {:.4}'.format(zDim*0.05,xDim*0.05,yDim*0.05), 'mm')
     fid = gzip.open(rawgzFile,'rb')
     _buffer = fid.read(xDim*yDim*zDim)
     fid.close()
     volume = np.fromstring(_buffer, 'uint8')
-    volume = np.reshape(volume, (xDim, yDim, zDim), order='F')
+    volume = np.reshape(volume, (zDim, xDim, yDim), order='F')
+    print (volume.shape)
+    print ("Crop the phantom in z-direction to rule out muscle")
+    muscle_slices = [0]
+    for zidx in range(1,int(zDim)):
+        if Labels['Muscle'] in volume[zidx,:,:]:
+            muscle_slices.append(zidx)
+        else:
+            break
+
+    volume = np.delete(volume, range(max(muscle_slices)+1),0)
+    zDim = volume.shape[0]
+    print ("the cropped VICTRE dims: ", zDim,xDim,yDim)
+    print ("the cropped physical dims: ", '{:.4} {:.4} {:.4}'.format(zDim*0.05,xDim*0.05,yDim*0.05), 'mm')
+    
     #check target slice range
-    if zz==-1 or thickness==-1:
+    if zz==-1:
         print ('Generate whole 3d volume data')
         return volume
 
@@ -67,8 +80,8 @@ def GetVolume(_path, phantom_id, zz, thickness ):
     assert(lb>=0) # out of the bounds
     assert(ub<zDim) # out of the bounds
     
-    lb = max(lb-2, 0);
-    ub = min(ub+2, zDim-1)
+    lb = max(lb-1, 0);
+    ub = min(ub+1, zDim-1)
     
     return volume[lb:ub+1,:,:]
 
@@ -99,13 +112,15 @@ def Labelprocessing3d(volume):
         volume = RemoveLabel(volume, Labels['Artery'])
         volume = RemoveLabel(volume, Labels['Vein'])
         volume = RemoveLabel(volume, Labels['Vein'])
-        ar = np.sum(volume[2:-2,:,:]==Labels['Artery'])
-        ve = np.sum(volume[2:-2,:,:]==Labels['Vein'])
-#        print (ar)
+        ar = np.sum(volume[1:-1,:,:]==Labels['Artery'])
+        ve = np.sum(volume[1:-1,:,:]==Labels['Vein'])
+        #print (ar)
         if ar==0 and ve==0:
             break
-    print (np.unique(volume[2:-2,:,:]))
-    return volume[2:-2,:,:]
+    print (np.unique(volume[1:-1,:,:]))
+    #data={'v': volume}
+    #hdf5storage.write(data, filename='v.mat', matlab_compatible=True)
+    return volume[1:-1,:,:]
 
 
 def RemoveLabel(img, label):
@@ -168,7 +183,13 @@ def RemoveLabel(img, label):
             neighbor.append(img[ii-1,jj,kk+1])
         if len(neighbor)>0:
             newlabel = max(set(neighbor), key = neighbor.count) # get the highest frequency one
+            if newlabel==Labels['Vein'] or newlabel==Labels['Artery']:
+                if neighbor.count(Labels['Fat'])>neighbor.count(Labels['Glandular']):
+                    newlabel = Labels['Fat']
+                else:
+                    newlabel = Labels['Glandular']
             new_label_link.append(((ii,jj,kk), newlabel))  
+
             #saving the link between position and label
             #img[ii,jj,kk] = newlabel;
     
@@ -194,12 +215,6 @@ def SetPropValue(Prop, tissue):
     X = stats.truncnorm((lw-mu)/sigma, (up-mu)/sigma, loc=mu, scale=sigma)
     val = X.rvs(1)
     return float(val)
-
-
-
-
-
-
 
 def sampler2D(b, kappa, h):
     '''
@@ -261,7 +276,6 @@ def AddTexture3D(sos, density, label):
     '''
   
     vshape = sos.shape
-    print (vshape)
     #gland_dens_rn = np.random.normal(0,1,vshape)
     mean = 0; sigma =1; lw = mean-0.9*sigma; up = mean+0.9*sigma;
     X = stats.truncnorm((lw-mean)/sigma, (up-mean)/sigma, loc=mean, scale=sigma)
