@@ -118,10 +118,10 @@ Of these labels, only `Water`, `Fat`, `Skin` `Glandular`, `Ligament`, and `Tumor
  
 ### Acoustic properties maps  (2D)
 
-   	speed of sound map:      a mat file with data type float32,unit mm/\mus\\
-    density map:             a mat file with data type float32,unit kg/mm^3\\
-    attenuation map:         a mat file with data type float32,unit dB/mm/Mhz^y\\
-    label map:               a mat file with data type unit8 \\
+   	speed of sound map:      a mat file with data type float32,unit mm/\mus
+    density map:             a mat file with data type float32,unit kg/mm^3
+    attenuation map:         a mat file with data type float32,unit dB/mm/Mhz^y
+    label map:               a mat file with data type unit8 
 <!---  
 ## Files description
 
