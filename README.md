@@ -72,7 +72,7 @@ To generate a 3D thin slab from the 3D NBP
 ```sh
 python3 run_assign_properties.py -phantom_id <the digit identifier of the breast phantom> \
                                  -raw_data_path <the location of the VICTRE NBP> \
-                                 -target_slice <the z-index of 2D-slice or slab center to be extracted> \
+                                 -target_slice <the z location (mm) of 2D-slice or slab center to be extracted> \
                                  -thickness <the thinkness of the slab in voxel units> \
                                  -output_path <output path> \
                                  -resolution <voxel size in mm>
